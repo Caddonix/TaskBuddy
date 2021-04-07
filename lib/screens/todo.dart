@@ -1,6 +1,7 @@
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/material.dart';
 import 'package:taskbuddy/screens/taskToDoScreen.dart';
+import 'package:taskbuddy/utils/editToDoOptions.dart';
 
 class ToDoScreen extends StatefulWidget {
   ToDoScreen({Key key, this.title}) : super(key: key);
@@ -15,66 +16,65 @@ class _ToDoScreenState extends State<ToDoScreen> {
   final List todoList = [
     {
       "title": "Purva",
-      "isCompleted": true,
+      "isCompleted": false,
+      "isPrivate": false,
+      "isRecurring": false,
       "tags": ["reading", "writing", "coding", "dev", "sleeping"],
     },
     {
       "title": "Abby",
-      "isCompleted": true,
+      "isCompleted": false,
+      "isPrivate": false,
+      "isRecurring": false,
       "tags": ["coding", "dev", "sleeping", ""],
     },
     {
       "title": "1234",
-      "isCompleted": true,
+      "isCompleted": false,
+      "isPrivate": false,
+      "isRecurring": false,
       "tags": ["sleeping", "cooking", "", ""],
     },
     {
       "title": "5678",
-      "isCompleted": true,
+      "isCompleted": false,
+      "isPrivate": false,
+      "isRecurring": false,
       "tags": ["reading", "writing", "", ""],
     },
     {
       "title": "5678",
-      "isCompleted": true,
+      "isCompleted": false,
+      "isPrivate": false,
+      "isRecurring": false,
       "tags": ["reading", "writing", "", ""],
     },
   ];
 
-  Widget tagButton(index, i) {
-    var tags = todoList[index]["tags"];
-    return OutlinedButton(
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (_) => SimpleDialog(
-            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            backgroundColor: Colors.grey.shade100,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+  void deleteToDoItem(int index) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return ListTile(
+            leading: Icon(
+              Icons.delete,
+              color: Colors.red,
+            ),
             title: Text(
-              "Edit Tag",
+              'Confirm Delete',
               style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  letterSpacing: 1,
-                  fontSize: 20),
+                color: Colors.red,
+                fontSize: 14,
+              ),
             ),
-            children: [
-              
-            ],
-          ),
-        );
-      },
-      child: tags[i] != ""
-          ? Text(tags[i])
-          : Text(
-              "Add Tag",
-              style: TextStyle(fontSize: 12.0),
-            ),
-      style: OutlinedButton.styleFrom(
-        // shadowColor: Colors.white,
-        side: BorderSide(width: 0.5, color: Colors.white),
-      ),
-    );
+            onTap: () {
+              setState(() {
+                todoList.removeAt(index);
+              });
+              Navigator.pop(context);
+            },
+          );
+        });
   }
 
   @override
@@ -115,7 +115,6 @@ class _ToDoScreenState extends State<ToDoScreen> {
                 });
               },
               itemBuilder: (context, index) {
-                var tags = todoList[index]["tags"];
                 return ExpansionTile(
                   key: Key("$index"),
                   backgroundColor: Theme.of(context).backgroundColor,
@@ -141,28 +140,20 @@ class _ToDoScreenState extends State<ToDoScreen> {
                         : Theme.of(context).textTheme.bodyText2,
                   ),
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        tagButton(index, 0),
-                        tagButton(index, 1),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        tagButton(index, 2),
-                        tagButton(index, 3),
-                      ],
+                    EditToDoOptions(
+                      toDoList: todoList,
+                      index: index,
                     ),
                   ],
                   trailing: IconButton(
                     icon: Icon(
-                      Icons.more_horiz,
+                      Icons.delete,
                       color: Color(0xFFFFF5EE),
                       size: 20,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      deleteToDoItem(index);
+                    },
                   ),
                 );
               },

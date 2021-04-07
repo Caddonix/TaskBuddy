@@ -32,37 +32,7 @@ class _TaskToDoState extends State<TaskToDo> {
               Column(
                 children: [
                   // Recurring Toggle Button
-                  Text(
-                    "Recurring",
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                  CupertinoSwitch(
-                    value: _isRecurring,
-                    activeColor: Colors.blue,
-                    trackColor: Color(0xFF656565),
-                    onChanged: (bool value) {
-                      setState(() {
-                        _isRecurring = value;
-                      });
-                    },
-                  ),
 
-                  SizedBox(height: 8),
-                  // Private Toggle Button
-                  Text(
-                    "Private",
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                  CupertinoSwitch(
-                    value: _isPrivate,
-                    activeColor: Colors.pinkAccent,
-                    trackColor: Color(0xFF656565),
-                    onChanged: (bool value) {
-                      setState(() {
-                        _isPrivate = value;
-                      });
-                    },
-                  ),
                 ],
               )
             ],
