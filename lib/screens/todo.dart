@@ -16,71 +16,65 @@ class _ToDoScreenState extends State<ToDoScreen> {
     {
       "title": "Purva",
       "isCompleted": true,
+      "tags": ["reading", "writing", "coding", "dev", "sleeping"],
     },
     {
       "title": "Abby",
       "isCompleted": true,
+      "tags": ["coding", "dev", "sleeping", ""],
     },
     {
       "title": "1234",
       "isCompleted": true,
+      "tags": ["sleeping", "cooking", "", ""],
     },
     {
       "title": "5678",
       "isCompleted": true,
+      "tags": ["reading", "writing", "", ""],
     },
     {
-      "title": "9",
+      "title": "5678",
       "isCompleted": true,
-    },
-    {
-      "title": "10",
-      "isCompleted": true,
-    },
-    {
-      "title": "Abby Sanika, Parvathy, Pratam, Donovan",
-      "isCompleted": true,
+      "tags": ["reading", "writing", "", ""],
     },
   ];
 
-  void editOptions(int index) {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            height: MediaQuery.of(context).size.height * 0.18,
-            decoration: BoxDecoration(
-              color: Color(0xFFFFF5EE),
+  Widget tagButton(index, i) {
+    var tags = todoList[index]["tags"];
+    return OutlinedButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (_) => SimpleDialog(
+            contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            backgroundColor: Colors.grey.shade100,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text(
+              "Edit Tag",
+              style: TextStyle(
+                  color: Theme.of(context).primaryColor,
+                  letterSpacing: 1,
+                  fontSize: 20),
             ),
-            child: Column(
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Icons.create),
-                  title: Text(
-                    'Edit ToDo',
-                    style: TextStyle(color: Colors.black54, fontSize: 14),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.delete, color: Colors.red,),
-                  title: Text(
-                    'Delete ToDo',
-                    style: TextStyle(color: Colors.red, fontSize: 14),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      todoList.removeAt(index);
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
+            children: [
+              
+            ],
+          ),
+        );
+      },
+      child: tags[i] != ""
+          ? Text(tags[i])
+          : Text(
+              "Add Tag",
+              style: TextStyle(fontSize: 12.0),
             ),
-          );
-        });
+      style: OutlinedButton.styleFrom(
+        // shadowColor: Colors.white,
+        side: BorderSide(width: 0.5, color: Colors.white),
+      ),
+    );
   }
 
   @override
@@ -97,11 +91,13 @@ class _ToDoScreenState extends State<ToDoScreen> {
               "To Do",
               style: Theme.of(context).textTheme.headline3,
             ),
-            subtitle: Text("Today",
-                style: TextStyle(
-                    color: Color(0xFF656565),
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold)),
+            subtitle: Text(
+              "Today",
+              style: TextStyle(
+                  color: Color(0xFF656565),
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold),
+            ),
           ),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.05,
@@ -119,9 +115,11 @@ class _ToDoScreenState extends State<ToDoScreen> {
                 });
               },
               itemBuilder: (context, index) {
-                return ListTile(
+                var tags = todoList[index]["tags"];
+                return ExpansionTile(
                   key: Key("$index"),
-                  tileColor: Theme.of(context).backgroundColor,
+                  backgroundColor: Theme.of(context).backgroundColor,
+                  collapsedBackgroundColor: Theme.of(context).backgroundColor,
                   leading: CircularCheckBox(
                     activeColor: Colors.indigo,
                     inactiveColor: Color(0xFF656565),
@@ -142,15 +140,29 @@ class _ToDoScreenState extends State<ToDoScreen> {
                           )
                         : Theme.of(context).textTheme.bodyText2,
                   ),
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        tagButton(index, 0),
+                        tagButton(index, 1),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        tagButton(index, 2),
+                        tagButton(index, 3),
+                      ],
+                    ),
+                  ],
                   trailing: IconButton(
                     icon: Icon(
                       Icons.more_horiz,
                       color: Color(0xFFFFF5EE),
                       size: 20,
                     ),
-                    onPressed: () {
-                      editOptions(index);
-                    },
+                    onPressed: () {},
                   ),
                 );
               },
@@ -160,11 +172,13 @@ class _ToDoScreenState extends State<ToDoScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> TaskToDo()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => TaskToDo()));
         },
         tooltip: 'Add ToDo',
         child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
