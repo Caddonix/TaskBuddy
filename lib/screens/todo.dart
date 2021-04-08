@@ -1,7 +1,6 @@
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:taskbuddy/screens/taskToDoScreen.dart';
 
 class ToDoScreen extends StatefulWidget {
   ToDoScreen({Key key, this.title}) : super(key: key);
@@ -306,10 +305,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => TaskToDo()));
-        },
+        onPressed: () {},
         tooltip: 'Add ToDo',
         child: Icon(Icons.add),
       ),
