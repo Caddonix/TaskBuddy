@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _loginYOffset = 200;
         _registerYOffset = 0;
         _headingTop = 30;
-        _arrowColor = Colors.white;
+        _arrowColor = Colors.black;
         break;
     }
 
@@ -208,7 +208,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           "Login To Continue",
                           style: TextStyle(
                             fontSize: 20,
-                            color: Color(0xFF1D1D1D),
+                            color: Theme.of(context).primaryColor,
                           ),
                         ),
                       )
@@ -271,6 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           btnText: "Login",
                           onPressed: () {
                             print(":::::::::::::LOGIN:::::::::::::::");
+                            loginFormKey.currentState.validate();
                           }),
                       SizedBox(
                         height: 20,
@@ -280,6 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {
                           // Signing the User with Google
                           print(":::::::::::::::GOOGLE_SIGNIN::::::::::::::::");
+                          loginFormKey.currentState.validate();
                         },
                       ),
                       SizedBox(
@@ -308,131 +310,154 @@ class _LoginScreenState extends State<LoginScreen> {
           Form(
             key: signUpFormKey,
             child: AnimatedContainer(
-                padding: EdgeInsets.all(32),
-                curve: Curves.fastLinearToSlowEaseIn,
-                duration: Duration(milliseconds: 1000),
-                transform: Matrix4.translationValues(0, _registerYOffset, 1),
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25),
-                        topRight: Radius.circular(25))),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Container(
-                          margin:
-                              EdgeInsets.symmetric(horizontal: 0, vertical: 20),
-                          child: Text(
-                            "Create a New Account",
-                            style: TextStyle(
-                              fontSize: 20,
+              padding: EdgeInsets.all(32),
+              curve: Curves.fastLinearToSlowEaseIn,
+              duration: Duration(milliseconds: 1000),
+              transform: Matrix4.translationValues(0, _registerYOffset, 1),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25),
+                      topRight: Radius.circular(25))),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      GestureDetector(
+                        child: SafeArea(
+                          child: Container(
+                            alignment: Alignment.topLeft,
+                            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            child: Icon(
+                              Icons.arrow_back_rounded,
+                              color: _arrowColor,
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    InputWithIcon(
-                      btnIcon: Icons.phone,
-                      hintText: "Phone",
-                      myController: phoneController,
-                      keyboardType: TextInputType.phone,
-                      validateFunc: (value) {
-                        String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
-                        RegExp regExp = new RegExp(pattern);
-                        if (value.length == 0) {
-                          return 'Phone Required';
-                        } else if (!regExp.hasMatch(value)) {
-                          return 'Please enter valid mobile number';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    InputWithIcon(
-                      btnIcon: Icons.email_outlined,
-                      hintText: "Email",
-                      myController: emailController,
-                      validateFunc: (value) {
-                        if (value.isEmpty) {
-                          return "Email Required";
-                        } else if (!value.contains(RegExp(
-                            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
-                          return "Enter valid email address";
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    InputWithIcon(
+                        ),
+                        onTap: () {
+                          setState(() {
+                            if (_pageState == 2) {
+                              _pageState = 1;
+                            } else {
+                              _pageState = 0;
+                            }
+                          });
+                        },
+                      ),
+                      Container(
+                        margin:
+                            EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                        child: Text(
+                          "Create a New Account",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  InputWithIcon(
+                    btnIcon: Icons.phone,
+                    hintText: "Phone",
+                    myController: phoneController,
+                    keyboardType: TextInputType.phone,
+                    validateFunc: (value) {
+                      String pattern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
+                      RegExp regExp = new RegExp(pattern);
+                      if (value.length == 0) {
+                        return 'Phone Required';
+                      } else if (!regExp.hasMatch(value)) {
+                        return 'Please enter valid mobile number';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  InputWithIcon(
+                    btnIcon: Icons.email_outlined,
+                    hintText: "Email",
+                    myController: emailController,
+                    validateFunc: (value) {
+                      if (value.isEmpty) {
+                        return "Email Required";
+                      } else if (!value.contains(RegExp(
+                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
+                        return "Enter valid email address";
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  InputWithIcon(
+                    btnIcon: Icons.vpn_key,
+                    hintText: "Password",
+                    obscure: true,
+                    myController: passwordController,
+                    validateFunc: (value) {
+                      if (value.isEmpty) {
+                        return "Enter Password";
+                      } else if (value.length < 6) {
+                        return "Password should be atleast 6 characters!";
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  InputWithIcon(
                       btnIcon: Icons.vpn_key,
-                      hintText: "Password",
+                      hintText: "Confirm Password",
                       obscure: true,
-                      myController: passwordController,
-                      validateFunc: (value) {
-                        if (value.isEmpty) {
-                          return "Enter Password";
-                        } else if (value.length < 6) {
-                          return "Password should be atleast 6 characters!";
-                        }
+                      myController: confirmPassController,
+                      validateFunc: (val) {
+                        if (val.isEmpty) return 'Empty';
+                        if (val != passwordController.text) return 'Not Match';
+                        if (val.isEmpty) return 'Enter Password';
+                        if (val != passwordController.text) return 'Not Match';
                         return null;
-                      },
+                      }),
+                  SizedBox(
+                    height: 60,
+                  ),
+                  GestureDetector(
+                    child: PrimaryButton(
+                      btnText: "Create Account",
                     ),
-                    SizedBox(
-                      height: 20,
+                    onTap: () {
+                      print(":::::::::::::SIGNUP:::::::::::::::");
+                      signUpFormKey.currentState.validate();
+                      Navigator.pushNamed(context, "/username");
+                    },
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _pageState = 1;
+                        emailController.clear();
+                        passwordController.clear();
+                      });
+                    },
+                    child: OutlineBtn(
+                      btnText: "Have an account?",
                     ),
-                    InputWithIcon(
-                        btnIcon: Icons.vpn_key,
-                        hintText: "Confirm Password",
-                        obscure: true,
-                        myController: confirmPassController,
-                        validateFunc: (val) {
-                          if (val.isEmpty) return 'Empty';
-                          if (val != passwordController.text)
-                            return 'Not Match';
-                          if (val.isEmpty) return 'Enter Password';
-                          if (val != passwordController.text)
-                            return 'Not Match';
-                          return null;
-                        }),
-                    SizedBox(
-                      height: 60,
-                    ),
-                    GestureDetector(
-                      child: PrimaryButton(
-                        btnText: "Create Account",
-                      ),
-                      onTap: () {
-                        print(":::::::::::::SIGNUP:::::::::::::::");
-                      },
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _pageState = 1;
-                          emailController.clear();
-                          passwordController.clear();
-                        });
-                      },
-                      child: OutlineBtn(
-                        btnText: "Have an account?",
-                      ),
-                    ),
-                  ],
-                )),
+                  ),
+                ],
+              ),
+            ),
           )
         ],
       ),
@@ -478,7 +503,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
       onTap: widget.onPressed,
       child: Container(
         decoration: BoxDecoration(
-          color: Color(0xFF1D1D1D),
+          color: Theme.of(context).primaryColor,
           borderRadius: BorderRadius.circular(50),
         ),
         padding: EdgeInsets.all(15),
@@ -506,7 +531,7 @@ class _OutlineBtnState extends State<OutlineBtn> {
     return Container(
       decoration: BoxDecoration(
           border: Border.all(
-            color: Color(0xFFB1E4155),
+            color: Theme.of(context).primaryColor,
             width: 2,
           ),
           borderRadius: BorderRadius.circular(50)),
@@ -514,7 +539,7 @@ class _OutlineBtnState extends State<OutlineBtn> {
       child: Center(
           child: Text(
         widget.btnText,
-        style: TextStyle(color: Color(0xFFB1E4155), fontSize: 16),
+        style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 16),
       )),
     );
   }

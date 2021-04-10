@@ -3,15 +3,21 @@ import 'package:flutter/material.dart';
 class InputWithIcon extends StatefulWidget {
   final IconData btnIcon;
   final String hintText;
+  final TextStyle hintTextStyle;
+  final TextStyle textStyle;
   final TextEditingController myController;
   final Function(String) validateFunc;
+  final Function(String) onChange;
   final bool obscure;
   final TextInputType keyboardType;
   InputWithIcon({
     this.btnIcon,
     this.hintText,
+    this.hintTextStyle,
+    this.textStyle,
     this.myController,
     this.validateFunc,
+    this.onChange,
     this.obscure,
     this.keyboardType,
   });
@@ -47,10 +53,13 @@ class _InputWithIconState extends State<InputWithIcon> {
                   contentPadding: EdgeInsets.symmetric(vertical: 10),
                   border: InputBorder.none,
                   hintText: widget.hintText,
+                  hintStyle: widget.hintTextStyle,
                 ),
+                style: widget.textStyle,
                 autocorrect: false,
                 controller: widget.myController,
                 validator: widget.validateFunc,
+                onChanged: widget.onChange,
                 obscureText: widget.obscure ?? false,
                 keyboardType: widget.keyboardType ?? TextInputType.emailAddress,
               ),

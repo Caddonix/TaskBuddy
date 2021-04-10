@@ -1,6 +1,7 @@
 import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:taskbuddy/utils/inputWithIcon.dart';
 
 class ToDoScreen extends StatefulWidget {
   ToDoScreen({Key key, this.title}) : super(key: key);
@@ -13,12 +14,15 @@ class ToDoScreen extends StatefulWidget {
 
 class _ToDoScreenState extends State<ToDoScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
+  GlobalKey<FormState> _tagFormKey = GlobalKey();
+  TimeOfDay _initialTime = TimeOfDay.now();
   final List todoList = [
     {
       "title": "Purva",
       "isCompleted": false,
       "isPrivate": false,
       "isRecurring": false,
+      "reminder": null,
       "tags": ["reading", "writing", "coding", "dev", "sleeping"],
     },
     {
@@ -26,6 +30,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
       "isCompleted": false,
       "isPrivate": false,
       "isRecurring": false,
+      "reminder": null,
       "tags": ["coding", "dev", "sleeping", ""],
     },
     {
@@ -33,6 +38,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
       "isCompleted": false,
       "isPrivate": false,
       "isRecurring": false,
+      "reminder": null,
       "tags": ["sleeping", "cooking", "", ""],
     },
     {
@@ -40,6 +46,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
       "isCompleted": false,
       "isPrivate": false,
       "isRecurring": false,
+      "reminder": null,
       "tags": ["reading", "writing", "", ""],
     },
     {
@@ -47,6 +54,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
       "isCompleted": false,
       "isPrivate": false,
       "isRecurring": false,
+      "reminder": null,
       "tags": ["reading", "writing", "", ""],
     },
   ];
@@ -60,21 +68,18 @@ class _ToDoScreenState extends State<ToDoScreen> {
           height: MediaQuery.of(context).size.width * 0.075,
           width: MediaQuery.of(context).size.width * 0.3,
           decoration: BoxDecoration(
-              border: Border.all(
-                  color: Theme.of(context).accentColor
-              ),
-              borderRadius: BorderRadius.all(Radius.circular(10))
-          ),
+              border: Border.all(color: Theme.of(context).accentColor),
+              borderRadius: BorderRadius.all(Radius.circular(10))),
           child: Center(
             child: tags[i] != ""
                 ? Text(tags[i])
                 : Text(
-              "Add Tag",
-              style: TextStyle(
-                fontSize: 12.0,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
+                    "Add Tag",
+                    style: TextStyle(
+                      fontSize: 12.0,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
           ),
         ),
         onTap: () {
@@ -82,19 +87,39 @@ class _ToDoScreenState extends State<ToDoScreen> {
             context: context,
             builder: (_) => SimpleDialog(
               contentPadding:
-              EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               backgroundColor: Color(0xFF1D1D1D),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               title: Text(
-                "Edit Tag",
+                "Task Tag",
                 style: TextStyle(
                     color: Theme.of(context).primaryColor,
                     letterSpacing: 1,
                     fontSize: 20),
               ),
               children: [
-                Text("Fields to edit the tag"),
+                Form(
+                  key: _tagFormKey,
+                  child: InputWithIcon(
+                    btnIcon: Icons.tag,
+                    hintText: "Tag",
+                    hintTextStyle: TextStyle(color: Color(0xFF656565)),
+                    textStyle: TextStyle(color: Color(0xFFFFF5EE)),
+                    validateFunc: (value) {
+                      if (value.isEmpty) {
+                        return "Empty Tag";
+                      }
+                      return null;
+                    },
+                    onChange: (value) {
+                      _tagFormKey.currentState.validate();
+                      setState(() {
+                        todoList[index]["tags"][i] = value;
+                      });
+                    },
+                  ),
+                ),
               ],
             ),
           );
@@ -192,99 +217,130 @@ class _ToDoScreenState extends State<ToDoScreen> {
                         : Theme.of(context).textTheme.bodyText2,
                   ),
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Form(
-                            key: _formKey,
-                            child: Padding(
-                              padding: const EdgeInsets.only(left : 10.0, right : 10.0),
-                              child: TextFormField(
-                                // controller: editToDo,
-                                minLines: 1,
-                                maxLines: 3,
-                                initialValue: todoList[index]["title"],
-                                validator: (value) {
-                                  if (value.length == 0){
-                                    return "Enter ToDo Title";
-                                  }
-                                  return null;
-                                },
-                                onChanged: (value) {
-                                  _formKey.currentState.validate();
-                                  setState(() {
-                                    todoList[index]["title"] = value;
-                                  });
-                                },
-                                decoration: const InputDecoration(
-                                  icon: const Icon(Icons.edit_outlined, color: Color(0xFFFFF5EE), size: 20,),
-                                  hintText: 'ToDo Title',
-                                  hintStyle: TextStyle(color: Color(0xFFFFF5EE)),
+                    Container(
+                      color: Color(0xFF1D1D1D),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            Form(
+                              key: _formKey,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0),
+                                child: TextFormField(
+                                  // controller: editToDo,
+                                  minLines: 1,
+                                  maxLines: 3,
+                                  initialValue: todoList[index]["title"],
+                                  validator: (value) {
+                                    if (value.length == 0) {
+                                      return "Enter ToDo Title";
+                                    }
+                                    return null;
+                                  },
+                                  onChanged: (value) {
+                                    _formKey.currentState.validate();
+                                    setState(() {
+                                      todoList[index]["title"] = value;
+                                    });
+                                  },
+                                  decoration: const InputDecoration(
+                                    icon: const Icon(
+                                      Icons.edit_outlined,
+                                      color: Color(0xFFFFF5EE),
+                                      size: 20,
+                                    ),
+                                    hintText: 'ToDo Title',
+                                    hintStyle:
+                                        TextStyle(color: Color(0xFFFFF5EE)),
+                                  ),
+                                  style: TextStyle(color: Color(0xFFFFF5EE)),
                                 ),
-                                style: TextStyle(color: Color(0xFFFFF5EE)),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 7.5,),
-                          Text("Tag Suggestions"),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              tagButton(index, 0),
-                              tagButton(index, 1),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              tagButton(index, 2),
-                              tagButton(index, 3),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Recurring",
-                                style: Theme.of(context).textTheme.bodyText2,
-                              ),
-                              Transform.scale(
-                                scale: 0.75,
-                                child: CupertinoSwitch(
-                                  value: todoList[index]["isRecurring"],
-                                  activeColor: Colors.blue,
-                                  trackColor: Color(0xFF656565),
-                                  onChanged: (bool value) {
+                            SizedBox(
+                              height: 7.5,
+                            ),
+                            Text("Tag Suggestions"),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                tagButton(index, 0),
+                                tagButton(index, 1),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                tagButton(index, 2),
+                                tagButton(index, 3),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Recurring",
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                ),
+                                Transform.scale(
+                                  scale: 0.75,
+                                  child: CupertinoSwitch(
+                                    value: todoList[index]["isRecurring"],
+                                    activeColor: Colors.blue,
+                                    trackColor: Color(0xFF656565),
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        todoList[index]["isRecurring"] = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                // SizedBox(height: 8),
+                                // Private Toggle Button
+                                Text(
+                                  "Private",
+                                  style: Theme.of(context).textTheme.bodyText2,
+                                ),
+                                Transform.scale(
+                                  scale: 0.75,
+                                  child: CupertinoSwitch(
+                                    value: todoList[index]["isPrivate"],
+                                    activeColor: Colors.pinkAccent,
+                                    trackColor: Color(0xFF656565),
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        todoList[index]["isPrivate"] = value;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.alarm,
+                                    size: 30,
+                                    color: Color(0xFFFFF5EE),
+                                  ),
+                                  onPressed: () async {
+                                    final TimeOfDay pickedTime =
+                                        await showTimePicker(
+                                      context: context,
+                                      initialTime: _initialTime,
+                                    );
                                     setState(() {
-                                      todoList[index]["isRecurring"] = value;
+                                      todoList[index]["reminder"] = pickedTime;
+                                      print(todoList[index]["reminder"]);
                                     });
                                   },
                                 ),
-                              ),
-
-                              SizedBox(height: 8),
-                              // Private Toggle Button
-                              Text(
-                                "Private",
-                                style: Theme.of(context).textTheme.bodyText2,
-                              ),
-                              Transform.scale(
-                                scale: 0.75,
-                                child: CupertinoSwitch(
-                                  value: todoList[index]["isPrivate"],
-                                  activeColor: Colors.pinkAccent,
-                                  trackColor: Color(0xFF656565),
-                                  onChanged: (bool value) {
-                                    setState(() {
-                                      todoList[index]["isPrivate"] = value;
-                                    });
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

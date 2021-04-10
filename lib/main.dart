@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:taskbuddy/screens/loginScreen.dart';
 import 'package:taskbuddy/screens/todo.dart';
+import 'package:taskbuddy/screens/userNameScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
       routes: {
         "/": (context) => ToDoScreen(),
         "/login": (context) => LoginScreen(),
+        "/username": (context) => UserNameScreen(),
       },
     );
   }
