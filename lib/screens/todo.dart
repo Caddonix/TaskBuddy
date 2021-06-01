@@ -1,7 +1,8 @@
-import 'package:circular_check_box/circular_check_box.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:taskbuddy/utils/inputWithIcon.dart';
+import 'package:taskbuddy/utils/notifications.dart';
 
 class ToDoScreen extends StatefulWidget {
   ToDoScreen({Key key, this.title}) : super(key: key);
@@ -34,7 +35,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
       "tags": ["coding", "dev", "sleeping", ""],
     },
     {
-      "title": "1234",
+      "title": "Prasad",
       "isCompleted": false,
       "isPrivate": false,
       "isRecurring": false,
@@ -42,7 +43,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
       "tags": ["sleeping", "cooking", "", ""],
     },
     {
-      "title": "5678",
+      "title": "Muskan",
       "isCompleted": false,
       "isPrivate": false,
       "isRecurring": false,
@@ -50,7 +51,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
       "tags": ["reading", "writing", "", ""],
     },
     {
-      "title": "5678",
+      "title": "Kushal",
       "isCompleted": false,
       "isPrivate": false,
       "isRecurring": false,
@@ -155,210 +156,236 @@ class _ToDoScreenState extends State<ToDoScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<NotificationService>(context, listen: false).initialize();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-          ListTile(
-            title: Text(
-              "To Do",
-              style: Theme.of(context).textTheme.headline3,
+      body: Consumer<NotificationService>(
+        builder: (context, model, _) => Column(
+          // mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.05,
             ),
-            subtitle: Text(
-              "Today",
-              style: TextStyle(
-                  color: Color(0xFF656565),
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold),
+            ListTile(
+              title: Text(
+                "Lots ToDo",
+                style: Theme.of(context).textTheme.headline3,
+              ),
+              subtitle: Text(
+                "Today",
+                style: TextStyle(
+                    color: Color(0xFF656565),
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.05,
-          ),
-          Expanded(
-            child: ReorderableListView.builder(
-              itemCount: todoList.length,
-              onReorder: (oldIndex, newIndex) {
-                setState(() {
-                  if (newIndex > oldIndex) {
-                    newIndex -= 1;
-                  }
-                  final items = todoList.removeAt(oldIndex);
-                  todoList.insert(newIndex, items);
-                });
-              },
-              itemBuilder: (context, index) {
-                return ExpansionTile(
-                  key: Key("$index"),
-                  backgroundColor: Theme.of(context).backgroundColor,
-                  collapsedBackgroundColor: Theme.of(context).backgroundColor,
-                  leading: CircularCheckBox(
-                    activeColor: Colors.indigo,
-                    inactiveColor: Color(0xFF656565),
-                    value: todoList[index]["isCompleted"],
-                    onChanged: (newValue) {
-                      setState(() {
-                        todoList[index]["isCompleted"] = newValue;
-                      });
-                    },
-                  ),
-                  title: Text(
-                    todoList[index]["title"],
-                    style: todoList[index]["isCompleted"]
-                        ? TextStyle(
-                            decoration: TextDecoration.lineThrough,
-                            fontSize: 14,
-                            color: Color(0xFF656565),
-                          )
-                        : Theme.of(context).textTheme.bodyText2,
-                  ),
-                  children: [
-                    Container(
-                      color: Color(0xFF1D1D1D),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            Form(
-                              key: _formKey,
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10.0, right: 10.0),
-                                child: TextFormField(
-                                  // controller: editToDo,
-                                  minLines: 1,
-                                  maxLines: 3,
-                                  initialValue: todoList[index]["title"],
-                                  validator: (value) {
-                                    if (value.length == 0) {
-                                      return "Enter ToDo Title";
-                                    }
-                                    return null;
-                                  },
-                                  onChanged: (value) {
-                                    _formKey.currentState.validate();
-                                    setState(() {
-                                      todoList[index]["title"] = value;
-                                    });
-                                  },
-                                  decoration: const InputDecoration(
-                                    icon: const Icon(
-                                      Icons.edit_outlined,
-                                      color: Color(0xFFFFF5EE),
-                                      size: 20,
-                                    ),
-                                    hintText: 'ToDo Title',
-                                    hintStyle:
-                                        TextStyle(color: Color(0xFFFFF5EE)),
-                                  ),
-                                  style: TextStyle(color: Color(0xFFFFF5EE)),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 7.5,
-                            ),
-                            Text("Tag Suggestions"),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                tagButton(index, 0),
-                                tagButton(index, 1),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                tagButton(index, 2),
-                                tagButton(index, 3),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Recurring",
-                                  style: Theme.of(context).textTheme.bodyText2,
-                                ),
-                                Transform.scale(
-                                  scale: 0.75,
-                                  child: CupertinoSwitch(
-                                    value: todoList[index]["isRecurring"],
-                                    activeColor: Colors.blue,
-                                    trackColor: Color(0xFF656565),
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        todoList[index]["isRecurring"] = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                // SizedBox(height: 8),
-                                // Private Toggle Button
-                                Text(
-                                  "Private",
-                                  style: Theme.of(context).textTheme.bodyText2,
-                                ),
-                                Transform.scale(
-                                  scale: 0.75,
-                                  child: CupertinoSwitch(
-                                    value: todoList[index]["isPrivate"],
-                                    activeColor: Colors.pinkAccent,
-                                    trackColor: Color(0xFF656565),
-                                    onChanged: (bool value) {
-                                      setState(() {
-                                        todoList[index]["isPrivate"] = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                IconButton(
-                                  icon: Icon(
-                                    Icons.alarm,
-                                    size: 30,
-                                    color: Color(0xFFFFF5EE),
-                                  ),
-                                  onPressed: () async {
-                                    final TimeOfDay pickedTime =
-                                        await showTimePicker(
-                                      context: context,
-                                      initialTime: _initialTime,
-                                    );
-                                    setState(() {
-                                      todoList[index]["reminder"] = pickedTime;
-                                      print(todoList[index]["reminder"]);
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.05,
+            ),
+            Expanded(
+              child: ReorderableListView.builder(
+                itemCount: todoList.length,
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    if (newIndex > oldIndex) {
+                      newIndex -= 1;
+                    }
+                    final items = todoList.removeAt(oldIndex);
+                    todoList.insert(newIndex, items);
+                  });
+                },
+                itemBuilder: (context, index) {
+                  return ExpansionTile(
+                    key: Key("$index"),
+                    backgroundColor: Theme.of(context).backgroundColor,
+                    collapsedBackgroundColor: Theme.of(context).backgroundColor,
+                    leading: Theme(
+                      data: ThemeData(
+                        unselectedWidgetColor: Colors.white, // Border color
+                      ),
+                      child: Checkbox(
+                        checkColor: Colors.indigo,
+                        fillColor: MaterialStateProperty.resolveWith(
+                            (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.selected))
+                            return Color(0xFFFFFFFF);
+                          return null; // Use the default value.
+                        }),
+                        value: todoList[index]["isCompleted"],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
+                        onChanged: (newValue) {
+                          setState(() {
+                            todoList[index]["isCompleted"] = newValue;
+                          });
+                        },
                       ),
                     ),
-                  ],
-                  trailing: IconButton(
-                    icon: Icon(
-                      Icons.delete,
-                      color: Color(0xFFFFF5EE),
-                      size: 20,
+                    title: Text(
+                      todoList[index]["title"],
+                      style: todoList[index]["isCompleted"]
+                          ? TextStyle(
+                              decoration: TextDecoration.lineThrough,
+                              fontSize: 14,
+                              color: Color(0xFF656565),
+                            )
+                          : Theme.of(context).textTheme.bodyText2,
                     ),
-                    onPressed: () {
-                      deleteToDoItem(index);
-                    },
-                  ),
-                );
-              },
+                    children: [
+                      Container(
+                        color: Color(0xFF1D1D1D),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              Form(
+                                key: _formKey,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10.0, right: 10.0),
+                                  child: TextFormField(
+                                    // controller: editToDo,
+                                    minLines: 1,
+                                    maxLines: 3,
+                                    initialValue: todoList[index]["title"],
+                                    validator: (value) {
+                                      if (value.length == 0) {
+                                        return "Enter ToDo Title";
+                                      }
+                                      return null;
+                                    },
+                                    onChanged: (value) {
+                                      _formKey.currentState.validate();
+                                      setState(() {
+                                        todoList[index]["title"] = value;
+                                      });
+                                    },
+                                    decoration: const InputDecoration(
+                                      icon: const Icon(
+                                        Icons.edit_outlined,
+                                        color: Color(0xFFFFF5EE),
+                                        size: 20,
+                                      ),
+                                      hintText: 'ToDo Title',
+                                      hintStyle:
+                                          TextStyle(color: Color(0xFFFFF5EE)),
+                                    ),
+                                    style: TextStyle(color: Color(0xFFFFF5EE)),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 7.5,
+                              ),
+                              Text("Tag Suggestions"),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  tagButton(index, 0),
+                                  tagButton(index, 1),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  tagButton(index, 2),
+                                  tagButton(index, 3),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Recurring",
+                                    style:
+                                        Theme.of(context).textTheme.bodyText2,
+                                  ),
+                                  Transform.scale(
+                                    scale: 0.75,
+                                    child: CupertinoSwitch(
+                                      value: todoList[index]["isRecurring"],
+                                      activeColor: Colors.blue,
+                                      trackColor: Color(0xFF656565),
+                                      onChanged: (bool value) {
+                                        setState(() {
+                                          todoList[index]["isRecurring"] =
+                                              value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  // SizedBox(height: 8),
+                                  // Private Toggle Button
+                                  Text(
+                                    "Private",
+                                    style:
+                                        Theme.of(context).textTheme.bodyText2,
+                                  ),
+                                  Transform.scale(
+                                    scale: 0.75,
+                                    child: CupertinoSwitch(
+                                      value: todoList[index]["isPrivate"],
+                                      activeColor: Colors.pinkAccent,
+                                      trackColor: Color(0xFF656565),
+                                      onChanged: (bool value) {
+                                        setState(() {
+                                          todoList[index]["isPrivate"] = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  IconButton(
+                                    icon: Icon(
+                                      Icons.alarm,
+                                      size: 30,
+                                      color: Color(0xFFFFF5EE),
+                                    ),
+                                    onPressed: () async {
+                                      final TimeOfDay pickedTime =
+                                          await showTimePicker(
+                                        context: context,
+                                        initialTime: _initialTime,
+                                      );
+                                      setState(() {
+                                        todoList[index]["reminder"] =
+                                            pickedTime;
+                                        print(todoList[index]["reminder"]);
+                                      });
+                                      model.instantNotification();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: Color(0xFFFFF5EE),
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        deleteToDoItem(index);
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
