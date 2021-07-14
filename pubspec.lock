@@ -308,6 +308,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.99"
+  socket_io_client:
+    dependency: "direct main"
+    description:
+      name: socket_io_client
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
+  socket_io_common:
+    dependency: transitive
+    description:
+      name: socket_io_common
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   source_span:
     dependency: transitive
     description:
@@ -428,5 +442,9 @@ packages:
     source: hosted
     version: "0.2.0"
 sdks:
+<<<<<<< HEAD
   dart: ">=2.13.0 <3.0.0"
+=======
+  dart: ">=2.12.0 <3.0.0"
+>>>>>>> b0fff4efcd44fa3624aa3f1aff42a045df17ab2b
   flutter: ">=2.2.0"

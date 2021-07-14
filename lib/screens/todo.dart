@@ -66,6 +66,12 @@ class _ToDoScreenState extends State<ToDoScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<NotificationService>(context, listen: false).initialize();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -275,6 +281,16 @@ class _ToDoScreenState extends State<ToDoScreen> {
                           );
                         },
                       ),
+                    ],
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.delete,
+                        color: Color(0xFFFFF5EE),
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        deleteToDoItem(index);
+                      },
                     ),
                 ],
               ),

@@ -18,13 +18,21 @@ class NotificationService extends ChangeNotifier {
         requestBadgePermission: true,
         requestSoundPermission: true,
         onDidReceiveLocalNotification:
+<<<<<<< HEAD
             (int id, String? title, String? body, String? payload) async {});
+=======
+            (int id, String title, String body, String payload) async {});
+>>>>>>> b0fff4efcd44fa3624aa3f1aff42a045df17ab2b
 
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
 
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
+<<<<<<< HEAD
         onSelectNotification: (String? payload) async {
+=======
+        onSelectNotification: (String payload) async {
+>>>>>>> b0fff4efcd44fa3624aa3f1aff42a045df17ab2b
       if (payload != null) {
         debugPrint('notification payload: ' + payload);
       }
@@ -46,12 +54,17 @@ class NotificationService extends ChangeNotifier {
     var platform = new NotificationDetails(android: android, iOS: iOS);
 
     await _flutterLocalNotificationsPlugin.show(
+<<<<<<< HEAD
       0,
       "Hello world!",
       "Tap me please baby!",
       platform,
       payload: "How you doin!",
     );
+=======
+        0, "Hello world!", "Tap me please baby!", platform,
+        payload: "How you doin!");
+>>>>>>> b0fff4efcd44fa3624aa3f1aff42a045df17ab2b
   }
 
   // Image notification
@@ -75,6 +88,7 @@ class NotificationService extends ChangeNotifier {
   // Stylish Notification
   Future stylishNotification() async {
     var android = AndroidNotificationDetails(
+<<<<<<< HEAD
       "id",
       "channel",
       "description",
@@ -84,6 +98,16 @@ class NotificationService extends ChangeNotifier {
       largeIcon: DrawableResourceAndroidBitmap("taskbuddy_logo"),
       styleInformation:
           MediaStyleInformation(htmlFormatContent: true, htmlFormatTitle: true),
+=======
+        "id",
+        "channel",
+        "description",
+    color: Colors.deepPurple,
+      enableLights: true,
+      enableVibration: true,
+      largeIcon: DrawableResourceAndroidBitmap("taskbuddy_logo"),
+      styleInformation: MediaStyleInformation(htmlFormatContent: true, htmlFormatTitle: true),
+>>>>>>> b0fff4efcd44fa3624aa3f1aff42a045df17ab2b
     );
 
     var platform = new NotificationDetails(android: android);
@@ -106,7 +130,11 @@ class NotificationService extends ChangeNotifier {
         styleInformation: bigPicture);
     var platform = new NotificationDetails(android: android);
     await _flutterLocalNotificationsPlugin.periodicallyShow(
+<<<<<<< HEAD
         0, "Hello world Scheduled!", "Tap me please baby!", interval, platform);
+=======
+        0, "Hello world Scheduled!", "Tap me please baby!", interval ,platform);
+>>>>>>> b0fff4efcd44fa3624aa3f1aff42a045df17ab2b
   }
 
   // Cancel notifications

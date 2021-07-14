@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,10 +30,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationService()),
         Provider<AuthService>(create: (_) => AuthService()),
         Provider<API>(create: (_) => API()),
-        // FutureProvider<List<String>>(
-        //   create: (_) => API().api.fetchCategories(),
-        //   initialData: [],
-        // ),
         Provider<SharedPreferences>(create: (_) => preferences),
       ],
       child: MaterialApp(
