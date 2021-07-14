@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 
 class InputWithIcon extends StatefulWidget {
-  final IconData btnIcon;
-  final String hintText;
-  final TextStyle hintTextStyle;
-  final TextStyle textStyle;
+  final IconData? btnIcon;
+  final String? hintText;
+  final TextStyle? hintTextStyle;
+  final TextStyle? textStyle;
   final TextEditingController myController;
-  final Function(String) validateFunc;
-  final Function(String) onChange;
-  final bool obscure;
-  final TextInputType keyboardType;
+  final String? Function(String?)? validateFunc;
+  final Function(String)? onChange;
+  final bool? obscure;
+  final TextInputType? keyboardType;
   InputWithIcon({
     this.btnIcon,
     this.hintText,
     this.hintTextStyle,
     this.textStyle,
-    this.myController,
-    this.validateFunc,
-    this.onChange,
+    required this.myController,
+    required this.onChange,
     this.obscure,
     this.keyboardType,
+    this.validateFunc,
   });
 
   @override
@@ -58,7 +58,7 @@ class _InputWithIconState extends State<InputWithIcon> {
                 style: widget.textStyle,
                 autocorrect: false,
                 controller: widget.myController,
-                validator: widget.validateFunc,
+                validator: widget.validateFunc  ,
                 onChanged: widget.onChange,
                 obscureText: widget.obscure ?? false,
                 keyboardType: widget.keyboardType ?? TextInputType.emailAddress,
