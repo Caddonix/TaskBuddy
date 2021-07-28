@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
+                        // margin: EdgeInsets.symmetric(vertical: 10),
                         child: Text(
                           "Welcome, we are so glad to see you!",
                           textAlign: TextAlign.center,
@@ -148,6 +148,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 Column(
                   children: [
                     Container(
+                      width: double.infinity,
+                      height: MediaQuery.of(context).size.height * 0.5,
                       child: Center(
                         child: Image.asset(
                           'assets/images/getStarted.jpg',
@@ -155,17 +157,48 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      color: Colors.white,
-                      child: GestureDetector(
-                        child: Container(
-                          margin: EdgeInsets.all(15),
-                          padding: EdgeInsets.all(20),
-                          width: double.infinity,
+                    // Container(
+                    //   color: Colors.white,
+                    //   child: GestureDetector(
+                    //     child: Container(
+                    //       margin: EdgeInsets.all(5),
+                    //       padding: EdgeInsets.all(20),
+                    //       width: double.infinity,
+                    //       decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(50)),
+                    //       child: Center(
+                    //         child: Text(
+                    //           "Get Started",
+                    //           style: TextStyle(
+                    //             color: Colors.white,
+                    //             fontSize: 16,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     onTap: () {
+                    //
+                    //     },
+                    //   ),
+                    // ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: double.infinity,
+                        child: DecoratedBox(
                           decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(50)),
-                          child: Center(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: OutlinedButton(
+                            onPressed: () {
+                              setState(() {
+                                if (_pageState != 0) {
+                                  _pageState = 0;
+                                } else {
+                                  _pageState = 1;
+                                }
+                              });
+                            },
                             child: Text(
                               "Get Started",
                               style: TextStyle(
@@ -175,17 +208,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         ),
-                        onTap: () {
-                          setState(() {
-                            if (_pageState != 0) {
-                              _pageState = 0;
-                            } else {
-                              _pageState = 1;
-                            }
-                          });
-                        },
                       ),
-                    ),
+                    )
                   ],
                 ),
               ],
@@ -201,10 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
               duration: Duration(milliseconds: 1000),
               transform: Matrix4.translationValues(0, _loginYOffset, 1),
               decoration: BoxDecoration(
-                  color: Color(0xFFFFFFFF),
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25),
-                      topRight: Radius.circular(25))),
+                  color: Color(0xFFFFFFFF), borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
               child: Column(
                 children: [
                   Column(
@@ -231,8 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         validateFunc: (value) {
                           if (value!.isEmpty) {
                             return "Email Required";
-                          } else if (!value.contains(RegExp(
-                              r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
+                          } else if (!value.contains(RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
                             return "Enter valid email address";
                           }
                           return null;
@@ -312,11 +332,8 @@ class _LoginScreenState extends State<LoginScreen> {
               curve: Curves.fastLinearToSlowEaseIn,
               duration: Duration(milliseconds: 1000),
               transform: Matrix4.translationValues(0, _registerYOffset, 1),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25),
-                      topRight: Radius.circular(25))),
+              decoration:
+                  BoxDecoration(color: Colors.white, borderRadius: BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25))),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -345,8 +362,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                       ),
                       Container(
-                        margin:
-                            EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                        margin: EdgeInsets.symmetric(horizontal: 0, vertical: 20),
                         child: Text(
                           "Create a New Account",
                           style: TextStyle(
@@ -356,9 +372,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       )
                     ],
-                  ),
-                  SizedBox(
-                    height: 20,
                   ),
                   InputWithIcon(
                     btnIcon: Icons.person,
@@ -373,9 +386,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
                   InputWithIcon(
                     btnIcon: Icons.email_outlined,
                     hintText: "Email",
@@ -384,15 +394,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     validateFunc: (value) {
                       if (value!.isEmpty) {
                         return "Email Required";
-                      } else if (!value.contains(RegExp(
-                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
+                      } else if (!value.contains(RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+"))) {
                         return "Enter valid email address";
                       }
                       return null;
                     },
-                  ),
-                  SizedBox(
-                    height: 20,
                   ),
                   InputWithIcon(
                     btnIcon: Icons.vpn_key,
@@ -409,9 +415,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                       return null;
                     },
-                  ),
-                  SizedBox(
-                    height: 20,
                   ),
                   InputWithIcon(
                       btnIcon: Icons.vpn_key,
@@ -465,14 +468,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
-                    decoration:
-                        BoxDecoration(color: Colors.grey.withOpacity(0.5)),
+                    decoration: BoxDecoration(color: Colors.grey.withOpacity(0.5)),
                     child: Center(
-                      child: SizedBox(
-                        height: 75,
-                        width: 75,
-                        child: CircularProgressIndicator(),
-                      ),
+                      child: CircularProgressIndicator(),
                     ),
                   ),
                 ),
@@ -491,8 +489,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = true;
       });
-      final authServiceProvider =
-          Provider.of<AuthService>(context, listen: false);
+      final authServiceProvider = Provider.of<AuthService>(context, listen: false);
 
       // Call backend to login the user
       var authUser = await authServiceProvider.loginUser(
@@ -501,8 +498,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (authUser != null) {
-        SharedPreferences prefs =
-            Provider.of<SharedPreferences>(context, listen: false);
+        SharedPreferences prefs = Provider.of<SharedPreferences>(context, listen: false);
         prefs.setString('email', authUser.email);
         prefs.setString('name', authUser.name);
         prefs.setString('alias', authUser.userName);
@@ -519,8 +515,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         _isLoading = true;
       });
-      final authServiceProvider =
-          Provider.of<AuthService>(context, listen: false);
+      final authServiceProvider = Provider.of<AuthService>(context, listen: false);
       // Call backend to signup the user
       var authUser = await authServiceProvider.registerUser(
         emailController.text,
@@ -529,8 +524,7 @@ class _LoginScreenState extends State<LoginScreen> {
         userNameController.text,
       );
       if (authUser != null) {
-        SharedPreferences prefs =
-            Provider.of<SharedPreferences>(context, listen: false);
+        SharedPreferences prefs = Provider.of<SharedPreferences>(context, listen: false);
         prefs.setString('email', authUser.email);
         prefs.setString('name', authUser.name);
         prefs.setString('alias', authUser.userName);

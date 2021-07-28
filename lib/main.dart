@@ -4,20 +4,18 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskbuddy/api.dart';
 import 'package:taskbuddy/landingPage.dart';
-import 'package:taskbuddy/screens/addToDo.dart';
+import 'package:taskbuddy/screens/homePage.dart';
 import 'package:taskbuddy/screens/loginScreen.dart';
 import 'package:taskbuddy/screens/todo.dart';
 import 'package:taskbuddy/utils/authentication/authService.dart';
 import 'package:taskbuddy/utils/notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  runApp(
-    MyApp(
-      preferences: prefs,
-    ),
-  );
+  tz.initializeTimeZones();
+  runApp(MyApp(preferences: prefs));
 }
 
 class MyApp extends StatelessWidget {
@@ -58,7 +56,8 @@ class MyApp extends StatelessWidget {
         routes: {
           "/": (context) => LandingPage(),
           "/login": (context) => LoginScreen(),
-          "/home": (context) => ToDoScreen(),
+          "/home": (context) => HomePage(),
+          "/todos": (context) => ToDoScreen(),
         },
       ),
     );

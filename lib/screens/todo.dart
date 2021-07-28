@@ -1,11 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taskbuddy/screens/addToDo.dart';
 import 'package:taskbuddy/utils/notifications.dart';
-
 import '../api.dart';
 
 class ToDoScreen extends StatefulWidget {
@@ -20,59 +20,34 @@ class _ToDoScreenState extends State<ToDoScreen> {
   bool _isLoading = false;
   List<Map<String, dynamic>>? todoList;
 
-  void deleteToDoItem(int index) {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return ListTile(
-            leading: Icon(
-              Icons.delete,
-              color: Colors.red,
-            ),
-            title: Text(
-              'Confirm Delete',
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 14,
-              ),
-            ),
-            onTap: () {
-              setState(() {
-                todoList!.removeAt(index);
-              });
-              Navigator.pop(context);
-            },
-          );
-        });
-  }
-
   void fetchToDoList() async {
     Provider.of<NotificationService>(context, listen: false).initialize();
     API api = Provider.of<API>(context, listen: false);
-    SharedPreferences prefs =
-        Provider.of<SharedPreferences>(context, listen: false);
+    SharedPreferences prefs = Provider.of<SharedPreferences>(context, listen: false);
     api.fetchToDos(prefs: prefs).then((List<Map<String, dynamic>>? todolist) {
+      for (int i = 0; i < todolist!.length; i++) {
+        todolist[i]["isExpanded"] = false;
+      }
       setState(() {
-        print(todolist);
         todoList = todolist;
       });
+    }).catchError((error) {
+      Fluttertoast.showToast(msg: "Error fetching ToDos!");
     });
   }
 
   @override
   void initState() {
     super.initState();
+    Provider.of<NotificationService>(context, listen: false).initialize();
     fetchToDoList();
   }
 
   @override
-  void initState() {
-    super.initState();
-    Provider.of<NotificationService>(context, listen: false).initialize();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    API api = Provider.of<API>(context, listen: false);
+    SharedPreferences prefs = Provider.of<SharedPreferences>(context, listen: false);
+
     return SafeArea(
       child: Scaffold(
         body: Consumer<NotificationService>(
@@ -89,18 +64,13 @@ class _ToDoScreenState extends State<ToDoScreen> {
                   ),
                   Text(
                     "Today",
-                    style: TextStyle(
-                        color: Color(0xFF656565),
-                        fontSize: 24.0,
-                        fontWeight: FontWeight.bold),
+                    style: TextStyle(color: Color(0xFF656565), fontSize: 24.0, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.05,
-                  ),
+                  SizedBox(height: 10),
                   if (todoList == null)
                     Center(
                       child: Text(
-                        "Oops! Something went wrong!\n\nCheck your internet.",
+                        "Fetching your ToDos...\n\nCheck your internet if this message persists!",
                         textAlign: TextAlign.center,
                         style: TextStyle(fontSize: 16),
                       ),
@@ -117,180 +87,260 @@ class _ToDoScreenState extends State<ToDoScreen> {
                     Expanded(
                       child: ReorderableListView.builder(
                         itemCount: todoList!.length,
-                        onReorder: (oldIndex, newIndex) {
+                        onReorder: (oldIndex, newIndex) async {
+                          if (newIndex > oldIndex) {
+                            newIndex -= 1;
+                          }
                           setState(() {
-                            if (newIndex > oldIndex) {
-                              newIndex -= 1;
-                            }
-                            final items = todoList!.removeAt(oldIndex);
-                            todoList!.insert(newIndex, items);
+                            _isLoading = true;
                           });
+                          final updatedList = todoList;
+                          final item = updatedList!.removeAt(oldIndex);
+                          updatedList.insert(newIndex, item);
+                          bool success = await api.updateToDoList(prefs: prefs, updatedList: updatedList);
+
+                          if (!success) {
+                            Fluttertoast.showToast(msg: "Something went wrong!");
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          } else {
+                            setState(() {
+                              todoList = updatedList;
+                              _isLoading = false;
+                            });
+                          }
                         },
                         itemBuilder: (context, index) {
-                          return ExpansionTile(
+                          return Theme(
                             key: Key("$index"),
-                            backgroundColor: Theme.of(context).backgroundColor,
-                            collapsedBackgroundColor:
-                                Theme.of(context).backgroundColor,
-                            leading: Theme(
-                              data: ThemeData(
-                                unselectedWidgetColor:
-                                    Colors.white, // Border color
-                              ),
-                              child: Checkbox(
+                            data: ThemeData(
+                              unselectedWidgetColor: Colors.white, // Border color for unselected checkbox
+                              // dividerColor: Colors.white
+                            ),
+                            child: ExpansionTile(
+                              backgroundColor: Theme.of(context).backgroundColor,
+                              collapsedBackgroundColor: Theme.of(context).backgroundColor,
+                              leading: Checkbox(
                                 checkColor: Colors.indigo,
-                                fillColor: MaterialStateProperty.resolveWith(
-                                    (Set<MaterialState> states) {
-                                  if (states.contains(MaterialState.selected))
-                                    return Color(0xFFFFFFFF);
+                                fillColor: MaterialStateProperty.resolveWith((Set<MaterialState> states) {
+                                  if (states.contains(MaterialState.selected)) return Color(0xFFFFFFFF);
                                   return null; // Use the default value.
                                 }),
                                 value: todoList![index]["isCompleted"],
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
-                                onChanged: (newValue) {
+                                onChanged: (isCompleted) async {
                                   setState(() {
-                                    todoList![index]["isCompleted"] = newValue;
+                                    _isLoading = true;
                                   });
+                                  todoList![index]["isCompleted"] = isCompleted;
+                                  bool success = await api.updateToDoList(prefs: prefs, updatedList: todoList!);
+
+                                  if (!success) {
+                                    Fluttertoast.showToast(msg: "Something went wrong!");
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      todoList![index]["isCompleted"] = isCompleted;
+                                      _isLoading = false;
+                                    });
+                                  }
                                 },
                               ),
-                            ),
-                            title: Text(todoList![index]["title"],
-                                style: todoList![index]["isCompleted"]
-                                    ? TextStyle(
-                                        decoration: TextDecoration.lineThrough,
-                                        fontSize: 16,
-                                        color: Colors.grey,
-                                      )
-                                    : TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                      )),
-                            children: [
-                              Container(
-                                color: Color(0xFF1D1D1D),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
-                                      TextFormField(
-                                        style: TextStyle(color: Colors.white70),
-                                        decoration: InputDecoration(
-                                          enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                  color: Colors.white24)),
-                                          border: OutlineInputBorder(),
-                                          labelText: "Description",
-                                          hintText: "Describe your ToDo",
-                                          hintStyle:
-                                              TextStyle(color: Colors.white54),
-                                          labelStyle:
-                                              TextStyle(color: Colors.white70),
+                              title: Text(todoList![index]["title"],
+                                  style: todoList![index]["isCompleted"]
+                                      ? TextStyle(
+                                          decoration: TextDecoration.lineThrough,
+                                          fontSize: 16,
+                                          color: Colors.white.withOpacity(0.75),
+                                        )
+                                      : TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        )),
+                              subtitle: Text(
+                                todoList![index]["desc"].length > 30
+                                    ? todoList![index]["desc"].substring(0, 30) + "..."
+                                    : todoList![index]["desc"] + "...",
+                                style: TextStyle(color: Theme.of(context).accentColor.withOpacity(0.9)),
+                              ),
+                              onExpansionChanged: (bool expanded) {
+                                setState(() {
+                                  todoList![index]["isExpanded"] = expanded;
+                                });
+                              },
+                              children: [
+                                Container(
+                                  color: Color(0xFF1D1D1D),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Column(
+                                      children: [
+                                        ListTile(
+                                          title: Text(todoList![index]["desc"], style: TextStyle(color: Colors.white70)),
                                         ),
-                                        initialValue: todoList![index]["desc"],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "Recurring",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2,
-                                          ),
-                                          Transform.scale(
-                                            scale: 0.75,
-                                            child: CupertinoSwitch(
-                                              value: todoList![index]
-                                                  ["isRecurr"],
-                                              activeColor: Colors.blue,
-                                              trackColor: Color(0xFF656565),
-                                              onChanged: (bool value) {
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Recurring",
+                                              style: Theme.of(context).textTheme.bodyText2,
+                                            ),
+                                            Transform.scale(
+                                              scale: 0.75,
+                                              child: CupertinoSwitch(
+                                                value: todoList![index]["isRecurr"],
+                                                activeColor: Colors.blue,
+                                                trackColor: Color(0xFF656565),
+                                                onChanged: (bool isRecurring) async {
+                                                  setState(() {
+                                                    _isLoading = true;
+                                                  });
+                                                  todoList![index]["isRecurr"] = isRecurring;
+                                                  bool success = await api.updateToDoList(prefs: prefs, updatedList: todoList!);
+
+                                                  if (!success) {
+                                                    Fluttertoast.showToast(msg: "Something went wrong!");
+                                                    setState(() {
+                                                      _isLoading = false;
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      todoList![index]["isRecurr"] = isRecurring;
+                                                      _isLoading = false;
+                                                    });
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                            // Private Toggle Button
+                                            Text(
+                                              "Private",
+                                              style: Theme.of(context).textTheme.bodyText2,
+                                            ),
+                                            Transform.scale(
+                                              scale: 0.75,
+                                              child: CupertinoSwitch(
+                                                value: todoList![index]["isPrivate"],
+                                                activeColor: Colors.pinkAccent,
+                                                trackColor: Color(0xFF656565),
+                                                onChanged: (bool isPrivate) async {
+                                                  setState(() {
+                                                    _isLoading = true;
+                                                  });
+                                                  todoList![index]["isPrivate"] = isPrivate;
+                                                  bool success = await api.updateToDoList(prefs: prefs, updatedList: todoList!);
+
+                                                  if (!success) {
+                                                    Fluttertoast.showToast(msg: "Something went wrong!");
+                                                    setState(() {
+                                                      _isLoading = false;
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      todoList![index]["isPrivate"] = isPrivate;
+                                                      _isLoading = false;
+                                                    });
+                                                  }
+                                                },
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.alarm,
+                                                size: 30,
+                                                color: Color(0xFFFFF5EE),
+                                              ),
+                                              onPressed: () async {
+                                                final TimeOfDay? pickedTime = await showTimePicker(
+                                                  context: context,
+                                                  initialTime: _initialTime,
+                                                );
                                                 setState(() {
-                                                  todoList![index]["isRecurr"] =
-                                                      value;
+                                                  _isLoading = true;
                                                 });
+                                                DateTime? date;
+                                                final now = DateTime.now();
+                                                if (pickedTime != null) {
+                                                  date = DateTime(now.year, now.month, now.day, pickedTime.hour, pickedTime.minute);
+                                                  todoList![index]["reminder"] = date.millisecondsSinceEpoch;
+                                                  bool success = await api.updateToDoList(prefs: prefs, updatedList: todoList!);
+
+                                                  if (!success) {
+                                                    Fluttertoast.showToast(msg: "Something went wrong!");
+                                                    setState(() {
+                                                      _isLoading = false;
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      todoList![index]["reminder"] = date!.millisecondsSinceEpoch;
+                                                      _isLoading = false;
+                                                    });
+                                                    model.scheduledNotification(
+                                                      id: index,
+                                                      title: todoList![index]["title"],
+                                                      body: todoList![index]["desc"],
+                                                      millisecondsSinceEpoch: todoList![index]["reminder"],
+                                                    );
+                                                  }
+                                                } else {
+                                                  Fluttertoast.showToast(msg: "Something went wrong!");
+                                                  setState(() {
+                                                    _isLoading = false;
+                                                  });
+                                                }
                                               },
                                             ),
-                                          ),
-                                          // Private Toggle Button
-                                          Text(
-                                            "Private",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyText2,
-                                          ),
-                                          Transform.scale(
-                                            scale: 0.75,
-                                            child: CupertinoSwitch(
-                                              value: todoList![index]
-                                                  ["isPrivate"],
-                                              activeColor: Colors.pinkAccent,
-                                              trackColor: Color(0xFF656565),
-                                              onChanged: (bool value) {
-                                                setState(() {
-                                                  todoList![index]
-                                                      ["isPrivate"] = value;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.alarm,
-                                              size: 30,
-                                              color: Color(0xFFFFF5EE),
-                                            ),
-                                            onPressed: () async {
-                                              final TimeOfDay? pickedTime =
-                                                  await showTimePicker(
-                                                context: context,
-                                                initialTime: _initialTime,
-                                              );
-                                              setState(() {
-                                                todoList![index]["reminder"] =
-                                                    pickedTime;
-                                                print(todoList![index]
-                                                    ["reminder"]);
-                                              });
-                                              model.instantNotification();
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                            trailing: IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Color(0xFFFFF5EE),
-                                size: 20,
-                              ),
-                              onPressed: () {
-                                deleteToDoItem(index);
-                              },
+                              ],
+                              trailing: (todoList![index]["isExpanded"])
+                                  ? IconButton(
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Color(0xFFFFF5EE),
+                                        size: 20,
+                                      ),
+                                      onPressed: () async {
+                                        setState(() {
+                                          _isLoading = true;
+                                        });
+                                        var updatedList = todoList;
+                                        updatedList!.removeAt(index);
+                                        bool success = await api.updateToDoList(prefs: prefs, updatedList: updatedList);
+
+                                        if (!success) {
+                                          Fluttertoast.showToast(msg: "Something went wrong!");
+                                          setState(() {
+                                            _isLoading = false;
+                                          });
+                                        } else {
+                                          setState(() {
+                                            todoList = updatedList;
+                                            _isLoading = false;
+                                          });
+                                        }
+                                      },
+                                    )
+                                  : Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: Colors.white.withOpacity(0.5),
+                                    ),
                             ),
                           );
                         },
                       ),
-                    ],
-                    trailing: IconButton(
-                      icon: Icon(
-                        Icons.delete,
-                        color: Color(0xFFFFF5EE),
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        deleteToDoItem(index);
-                      },
                     ),
                 ],
               ),
@@ -304,14 +354,9 @@ class _ToDoScreenState extends State<ToDoScreen> {
                       child: Container(
                         width: double.infinity,
                         height: double.infinity,
-                        decoration:
-                            BoxDecoration(color: Colors.grey.withOpacity(0.5)),
+                        decoration: BoxDecoration(color: Colors.grey.withOpacity(0.1)),
                         child: Center(
-                          child: SizedBox(
-                            height: 75,
-                            width: 75,
-                            child: CircularProgressIndicator(),
-                          ),
+                          child: CircularProgressIndicator(),
                         ),
                       ),
                     ),
@@ -328,8 +373,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
               _isLoading = true;
             });
             API api = Provider.of<API>(context, listen: false);
-            SharedPreferences prefs =
-                Provider.of<SharedPreferences>(context, listen: false);
+            SharedPreferences prefs = Provider.of<SharedPreferences>(context, listen: false);
             List<String> categories = await api.fetchCategories(prefs: prefs);
             Navigator.push(
               context,
@@ -344,7 +388,6 @@ class _ToDoScreenState extends State<ToDoScreen> {
           tooltip: 'Add ToDo',
           child: Icon(Icons.add),
         ),
-        // This trailing comma makes auto-formatting nicer for build methods.
       ),
     );
   }

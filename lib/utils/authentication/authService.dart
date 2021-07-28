@@ -38,7 +38,7 @@ class AuthService {
           "alias": userName,
         },
       );
-
+      print("Signup::: ${response.body}");
       if (response.statusCode == 200) {
         var loggedInUser = await loginUser(email, password);
         Fluttertoast.showToast(msg: "Login Successful!");
@@ -59,7 +59,7 @@ class AuthService {
   /// email, name, alias(username), and JWT token
   Future<User?> loginUser(String email, String password) async {
     // Request login action from server
-    try {
+    // try {
       final response = await http.post(
         Uri.parse('http://task-buddies.herokuapp.com/user/login'),
         body: {
@@ -68,19 +68,17 @@ class AuthService {
           "password": password,
         },
       );
+      print("Login::: ${response.body}");
       if (response.statusCode == 200) {
         var res = jsonDecode(response.body);
-        Fluttertoast.showToast(msg: "Login Successful!");
         return _user(res);
       } else {
         final errorObject = jsonDecode(response.body);
         Fluttertoast.showToast(msg: errorObject["error"]);
       }
-    } catch (error) {
-      print(error);
-      Fluttertoast.showToast(msg: "Something went wrong. Try again in Login!");
-    }
+    // } catch (error) {
+    //   print(error);
+    //   Fluttertoast.showToast(msg: "Something went wrong. Try again in Login!");
+    // }
   }
-
-
 }
