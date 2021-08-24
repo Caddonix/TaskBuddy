@@ -2,6 +2,7 @@
 // import 'dart:async';
 // import 'package:flutter_linkify/flutter_linkify.dart';
 // import 'package:intl/intl.dart';
+// import 'package:taskbuddy/utils/authentication/user.dart';
 // import 'package:url_launcher/url_launcher.dart';
 //
 //
@@ -9,7 +10,7 @@
 //   final String user;
 //   final String userEmail;
 //
-//   ChatScreen({this.user, this.userEmail});
+//   ChatScreen({required this.user, required this.userEmail});
 //
 //   @override
 //   _ChatScreenState createState() => _ChatScreenState();
@@ -43,128 +44,128 @@
 //     },
 //   ];
 //
-//   _chatBubble(
-//       UserCredentials authUser, Message message, bool isMe) {
-//     if (isMe) {
-//       return Column(
-//         children: <Widget>[
-//           Container(
-//             alignment: Alignment.topRight,
-//             child: Container(
-//               constraints: BoxConstraints(
-//                 maxWidth: MediaQuery.of(context).size.width * 0.80,
-//               ),
-//               padding: EdgeInsets.all(10),
-//               margin: EdgeInsets.symmetric(vertical: 5),
-//               decoration: BoxDecoration(
-//                 // color: Theme.of(context).primaryColor,
-//                 // color: Color(0xFFFEEFEC),
-//                 color: Colors.cyan.shade100,
-//                 borderRadius: BorderRadius.only(
-//                   topRight: Radius.circular(15),
-//                   topLeft: Radius.circular(15),
-//                   bottomLeft: Radius.circular(15),
-//                 ),
-//                 boxShadow: [
-//                   BoxShadow(
-//                     color: Colors.grey.withOpacity(0.3),
-//                     spreadRadius: 1,
-//                     blurRadius: 1,
-//                   ),
-//                 ],
-//               ),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Linkify(
-//                     onOpen: (link) async {
-//                       if (await canLaunch(link.url)) {
-//                         await launch(link.url);
-//                       } else {
-//                         throw 'Could not launch $link';
-//                       }
-//                     },
-//                     text: message.text,
-//                     style: TextStyle(color: Colors.black87,),
-//                     linkStyle: TextStyle(color: Colors.red.shade600),
-//                   ),
-//                   SizedBox(
-//                     height: 5,
-//                   ),
-//                   Text(
-//                     message.time,
-//                     style: TextStyle(
-//                       fontSize: 10.5,
-//                       color: Colors.black45,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ],
-//       );
-//     } else {
-//       return Column(
-//         children: <Widget>[
-//           Container(
-//             alignment: Alignment.topLeft,
-//             child: Container(
-//               constraints: BoxConstraints(
-//                 maxWidth: MediaQuery.of(context).size.width * 0.80,
-//               ),
-//               padding: EdgeInsets.all(10),
-//               margin: EdgeInsets.symmetric(vertical: 5),
-//               decoration: BoxDecoration(
-//                 color: Colors.white,
-//                 borderRadius: BorderRadius.only(
-//                   topRight: Radius.circular(15),
-//                   topLeft: Radius.circular(15),
-//                   bottomRight: Radius.circular(15),
-//                 ),
-//                 boxShadow: [
-//                   BoxShadow(
-//                     color: Colors.grey.withOpacity(0.3),
-//                     spreadRadius: 1,
-//                     blurRadius: 1,
-//                   ),
-//                 ],
-//               ),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Linkify(
-//                     onOpen: (link) async {
-//                       if (await canLaunch(link.url)) {
-//                         await launch(link.url);
-//                       } else {
-//                         throw 'Could not launch $link';
-//                       }
-//                     },
-//                     text: message.text,
-//                     style: TextStyle(color: Colors.black87,),
-//                     linkStyle: TextStyle(color: Colors.red.shade600),
-//                   ),
-//                   SizedBox(
-//                     height: 5,
-//                   ),
-//                   Text(
-//                     message.time,
-//                     style: TextStyle(
-//                       fontSize: 10.5,
-//                       color: Colors.black45,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ),
-//         ],
-//       );
-//     }
-//   }
+//   // _chatBubble(
+//   //     User authUser, Message message, bool isMe) {
+//   //   if (isMe) {
+//   //     return Column(
+//   //       children: <Widget>[
+//   //         Container(
+//   //           alignment: Alignment.topRight,
+//   //           child: Container(
+//   //             constraints: BoxConstraints(
+//   //               maxWidth: MediaQuery.of(context).size.width * 0.80,
+//   //             ),
+//   //             padding: EdgeInsets.all(10),
+//   //             margin: EdgeInsets.symmetric(vertical: 5),
+//   //             decoration: BoxDecoration(
+//   //               // color: Theme.of(context).primaryColor,
+//   //               // color: Color(0xFFFEEFEC),
+//   //               color: Colors.cyan.shade100,
+//   //               borderRadius: BorderRadius.only(
+//   //                 topRight: Radius.circular(15),
+//   //                 topLeft: Radius.circular(15),
+//   //                 bottomLeft: Radius.circular(15),
+//   //               ),
+//   //               boxShadow: [
+//   //                 BoxShadow(
+//   //                   color: Colors.grey.withOpacity(0.3),
+//   //                   spreadRadius: 1,
+//   //                   blurRadius: 1,
+//   //                 ),
+//   //               ],
+//   //             ),
+//   //             child: Column(
+//   //               crossAxisAlignment: CrossAxisAlignment.start,
+//   //               children: [
+//   //                 Linkify(
+//   //                   onOpen: (link) async {
+//   //                     if (await canLaunch(link.url)) {
+//   //                       await launch(link.url);
+//   //                     } else {
+//   //                       throw 'Could not launch $link';
+//   //                     }
+//   //                   },
+//   //                   text: message.text,
+//   //                   style: TextStyle(color: Colors.black87,),
+//   //                   linkStyle: TextStyle(color: Colors.red.shade600),
+//   //                 ),
+//   //                 SizedBox(
+//   //                   height: 5,
+//   //                 ),
+//   //                 Text(
+//   //                   message.time,
+//   //                   style: TextStyle(
+//   //                     fontSize: 10.5,
+//   //                     color: Colors.black45,
+//   //                   ),
+//   //                 ),
+//   //               ],
+//   //             ),
+//   //           ),
+//   //         ),
+//   //       ],
+//   //     );
+//   //   } else {
+//   //     return Column(
+//   //       children: <Widget>[
+//   //         Container(
+//   //           alignment: Alignment.topLeft,
+//   //           child: Container(
+//   //             constraints: BoxConstraints(
+//   //               maxWidth: MediaQuery.of(context).size.width * 0.80,
+//   //             ),
+//   //             padding: EdgeInsets.all(10),
+//   //             margin: EdgeInsets.symmetric(vertical: 5),
+//   //             decoration: BoxDecoration(
+//   //               color: Colors.white,
+//   //               borderRadius: BorderRadius.only(
+//   //                 topRight: Radius.circular(15),
+//   //                 topLeft: Radius.circular(15),
+//   //                 bottomRight: Radius.circular(15),
+//   //               ),
+//   //               boxShadow: [
+//   //                 BoxShadow(
+//   //                   color: Colors.grey.withOpacity(0.3),
+//   //                   spreadRadius: 1,
+//   //                   blurRadius: 1,
+//   //                 ),
+//   //               ],
+//   //             ),
+//   //             child: Column(
+//   //               crossAxisAlignment: CrossAxisAlignment.start,
+//   //               children: [
+//   //                 Linkify(
+//   //                   onOpen: (link) async {
+//   //                     if (await canLaunch(link.url)) {
+//   //                       await launch(link.url);
+//   //                     } else {
+//   //                       throw 'Could not launch $link';
+//   //                     }
+//   //                   },
+//   //                   text: message.text,
+//   //                   style: TextStyle(color: Colors.black87,),
+//   //                   linkStyle: TextStyle(color: Colors.red.shade600),
+//   //                 ),
+//   //                 SizedBox(
+//   //                   height: 5,
+//   //                 ),
+//   //                 Text(
+//   //                   message.time,
+//   //                   style: TextStyle(
+//   //                     fontSize: 10.5,
+//   //                     color: Colors.black45,
+//   //                   ),
+//   //                 ),
+//   //               ],
+//   //             ),
+//   //           ),
+//   //         ),
+//   //       ],
+//   //     );
+//   //   }
+//   // }
 //
-//   _sendMessageArea(UserCredentials authUser) {
+//   _sendMessageArea() {
 //     return Container(
 //       padding: EdgeInsets.all(8),
 //       height: 70,
@@ -209,36 +210,7 @@
 //                       () => _scrollController
 //                       .jumpTo(_scrollController.position.maxScrollExtent));
 //               if (message != "") {
-//                 await FirebaseFirestore.instance
-//                     .collection("Users")
-//                     .doc(authUser.email)
-//                     .collection("Chats")
-//                     .doc(widget.userEmail)
-//                     .update({
-//                   "chats": FieldValue.arrayUnion(
-//                     [
-//                       {
-//                         "message": message,
-//                         "sender": authUser.email,
-//                         "timestamp": DateTime.now(),
-//                       }
-//                     ],
-//                   ),
-//                 });
-//                 await FirebaseFirestore.instance
-//                     .collection("Users")
-//                     .doc(widget.userEmail)
-//                     .collection("Chats")
-//                     .doc(authUser.email)
-//                     .update({
-//                   "chats": FieldValue.arrayUnion([
-//                     {
-//                       "message": message,
-//                       "sender": authUser.email,
-//                       "timestamp": DateTime.now(),
-//                     }
-//                   ])
-//                 });
+//                 // ToDo: Send message
 //               }
 //             },
 //           ),
@@ -324,7 +296,7 @@
 //                     child: CircularProgressIndicator(),
 //                   );
 //                 }),
-//             _sendMessageArea(authUser),
+//             _sendMessageArea(),
 //           ],
 //         ),
 //       ),

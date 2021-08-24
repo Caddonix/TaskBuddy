@@ -132,7 +132,7 @@ class NotificationService extends ChangeNotifier {
   /// Periodically show a notification using the specified interval.
   /// For example, specifying a hourly interval means the first time the
   /// notification will be an hour after the method has been called and then every hour after that.
-  Future scheduledNotification({required int id, String? title, String? body, required int millisecondsSinceEpoch}) async {
+  Future scheduledNotification({required int id, String? title, String? body, required DateTime dateTime}) async {
     var android = AndroidNotificationDetails(
       _groupChannelId,
       _groupChannelName,
@@ -141,6 +141,7 @@ class NotificationService extends ChangeNotifier {
       priority: Priority.high,
       groupKey: _groupKey,
       sound: RawResourceAndroidNotificationSound("alarm_notification_audio"),
+      largeIcon: DrawableResourceAndroidBitmap("taskbuddy_logo"),
       playSound: true,
       ticker: 'TaskBuddy ticker',
       additionalFlags: Int32List.fromList(<int>[_insistentFlag]),
@@ -150,7 +151,7 @@ class NotificationService extends ChangeNotifier {
       id,
       title,
       body,
-      tz.TZDateTime.fromMillisecondsSinceEpoch(tz.local, millisecondsSinceEpoch),
+      tz.TZDateTime.from(dateTime, tz.local),
       platform,
       androidAllowWhileIdle: true,
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,

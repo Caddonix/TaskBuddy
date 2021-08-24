@@ -6,8 +6,10 @@ import 'package:taskbuddy/api.dart';
 import 'package:taskbuddy/landingPage.dart';
 import 'package:taskbuddy/screens/homePage.dart';
 import 'package:taskbuddy/screens/loginScreen.dart';
+import 'package:taskbuddy/screens/settingsScreen.dart';
 import 'package:taskbuddy/screens/todo.dart';
 import 'package:taskbuddy/utils/authentication/authService.dart';
+import 'package:taskbuddy/utils/authentication/user.dart';
 import 'package:taskbuddy/utils/notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -29,6 +31,14 @@ class MyApp extends StatelessWidget {
         Provider<AuthService>(create: (_) => AuthService()),
         Provider<API>(create: (_) => API()),
         Provider<SharedPreferences>(create: (_) => preferences),
+        // FutureProvider<User?>(
+        //   create: (context) async {
+        //     var prefs = Provider.of<SharedPreferences>(context, listen: false);
+        //     var pairedUser = await Provider.of<API>(context, listen: false).pairedUser(prefs: prefs);
+        //     return pairedUser;
+        //   },
+        //   initialData: null,
+        // ),
       ],
       child: MaterialApp(
         title: 'Lots ToDo',
@@ -36,6 +46,9 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.indigo,
           backgroundColor: Color(0xFF121212),
           scaffoldBackgroundColor: Color(0xFF121212),
+          appBarTheme: AppBarTheme(
+            brightness: Brightness.dark,
+          ),
           textTheme: TextTheme(
             headline1: TextStyle(
                 fontWeight: FontWeight.bold, color: Color(0xFFFFF5EE)),
@@ -58,6 +71,7 @@ class MyApp extends StatelessWidget {
           "/login": (context) => LoginScreen(),
           "/home": (context) => HomePage(),
           "/todos": (context) => ToDoScreen(),
+          "/settings": (context) => SettingsScreen(),
         },
       ),
     );

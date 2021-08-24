@@ -9,20 +9,6 @@ class AuthService {
     return User.fromJson(response);
   }
 
-  /// Returns the data about the currently logged in user
-  Future<User?> currentUser() async {
-    final response = await http
-        .get(Uri.parse("http://task-buddies.herokuapp.com/currentUser"));
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> user = jsonDecode(response.body);
-      return _user(user);
-    } else {
-      final errorObject = jsonDecode(response.body);
-      Fluttertoast.showToast(msg: errorObject["error"]);
-    }
-  }
-
   /// Creates a new user
   Future<User?> registerUser(
       String email, String password, String name, String userName) async {
@@ -59,7 +45,7 @@ class AuthService {
   /// email, name, alias(username), and JWT token
   Future<User?> loginUser(String email, String password) async {
     // Request login action from server
-    // try {
+    try {
       final response = await http.post(
         Uri.parse('http://task-buddies.herokuapp.com/user/login'),
         body: {
@@ -68,17 +54,18 @@ class AuthService {
           "password": password,
         },
       );
-      print("Login::: ${response.body}");
       if (response.statusCode == 200) {
         var res = jsonDecode(response.body);
         return _user(res);
       } else {
         final errorObject = jsonDecode(response.body);
         Fluttertoast.showToast(msg: errorObject["error"]);
+        return null;
       }
-    // } catch (error) {
-    //   print(error);
-    //   Fluttertoast.showToast(msg: "Something went wrong. Try again in Login!");
-    // }
+    } catch (error) {
+      print(error);
+      Fluttertoast.showToast(msg: "Check your email and password!");
+      return null;
+    }
   }
 }

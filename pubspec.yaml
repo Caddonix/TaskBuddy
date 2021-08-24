@@ -31,6 +31,7 @@ dependencies:
   url_launcher: ^6.0.3
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.0.6
+  socket_io_client: ^1.0.1
 
   # Helper dependencies:
   fluttertoast: ^8.0.7
@@ -41,11 +42,17 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_native_splash: ^1.2.0
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
 
-# The following section is specific to Flutter.
+flutter_native_splash:
+  color: "#4B0082"
+  image: assets/images/logo.png
+  android: true
+  ios: true
+  android_gravity: center
+  fullscreen: true
+
 flutter:
 
   # The following line ensures that the Material Icons font is

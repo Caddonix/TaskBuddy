@@ -157,29 +157,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    // Container(
-                    //   color: Colors.white,
-                    //   child: GestureDetector(
-                    //     child: Container(
-                    //       margin: EdgeInsets.all(5),
-                    //       padding: EdgeInsets.all(20),
-                    //       width: double.infinity,
-                    //       decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(50)),
-                    //       child: Center(
-                    //         child: Text(
-                    //           "Get Started",
-                    //           style: TextStyle(
-                    //             color: Colors.white,
-                    //             fontSize: 16,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     onTap: () {
-                    //
-                    //     },
-                    //   ),
-                    // ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -189,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             color: Theme.of(context).primaryColor,
                             borderRadius: BorderRadius.circular(50),
                           ),
-                          child: OutlinedButton(
+                          child: TextButton(
                             onPressed: () {
                               setState(() {
                                 if (_pageState != 0) {
@@ -375,6 +352,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   InputWithIcon(
                     btnIcon: Icons.person,
+                    hintText: "Name",
+                    myController: nameController,
+                    keyboardType: TextInputType.name,
+                    onChange: (String value) {},
+                    validateFunc: (value) {
+                      if (value!.isEmpty) {
+                        return "Enter Name";
+                      }
+                      return null;
+                    },
+                  ),
+                  InputWithIcon(
+                    btnIcon: Icons.person,
                     hintText: "Username",
                     myController: userNameController,
                     keyboardType: TextInputType.name,
@@ -411,7 +401,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (value!.isEmpty) {
                         return "Enter Password";
                       } else if (value.length < 6) {
-                        return "Password should be atleast 6 characters!";
+                        return "Password should be at least 6 characters!";
                       }
                       return null;
                     },
@@ -424,10 +414,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       keyboardType: TextInputType.visiblePassword,
                       onChange: (String value) {},
                       validateFunc: (val) {
-                        if (val!.isEmpty) return 'Empty';
-                        if (val != passwordController.text) return 'Not Match';
-                        if (val.isEmpty) return 'Enter Password';
-                        if (val != passwordController.text) return 'Not Match';
+                        if (val!.isEmpty) return 'Enter password again';
+                        if (val != passwordController.text) return 'Passwords do not Match';
                         return null;
                       }),
                   SizedBox(
@@ -506,6 +494,9 @@ class _LoginScreenState extends State<LoginScreen> {
         prefs.setString('token', authUser.token);
         Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
       }
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 

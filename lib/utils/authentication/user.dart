@@ -1,6 +1,6 @@
 class User {
   // Constructor for User Class
-  User( {
+  User({
     required this.uid,
     required this.email,
     required this.name,
@@ -10,14 +10,22 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> response) {
     return User(
-      uid: response["user"]["_id"],
-      userName: response["user"]["alias"],
-      email: response["user"]["email"],
-      name: response["user"]["name"],
-      token: response["jwt"]
-    );
+        uid: response["user"]["_id"],
+        userName: response["user"]["alias"],
+        email: response["user"]["email"],
+        name: response["user"]["name"],
+        token: response["jwt"]);
   }
 
+  factory User.pairedUser(Map<String, dynamic> response) {
+    return User(
+      uid: response["_id"],
+      name: response["name"],
+      email: response["email"],
+      userName: response["alias"],
+      token: '',
+    );
+  }
 
   // Essentials of a particular User
   final String uid; // unique id of the user

@@ -215,16 +215,17 @@ class _AddToDoState extends State<AddToDo> {
                                   id: 0,
                                   title: _categoryController.text,
                                   body: _descController.text,
-                                  millisecondsSinceEpoch: date.millisecondsSinceEpoch,
+                                  dateTime: date,
                                 );
                               }
                               var todo = {
-                                "title": _categoryController.text,
-                                "desc": _descController.text,
-                                "isRecurr": isRecurring,
-                                "isPrivate": isPrivate,
-                                "isCompleted": false,
-                                "reminder": date != null ? date.millisecondsSinceEpoch : null,
+                                "title": _categoryController.text, // String
+                                "desc": _descController.text, // String
+                                "isRecurr": isRecurring, // bool
+                                "isPrivate": isPrivate, // bool
+                                "isCompleted": false, // bool
+                                "reminder": date != null ? date.toString() : null, // String
+                                "created_at": DateTime.now().toString() // String
                               };
 
                               API api = Provider.of<API>(context, listen: false);
